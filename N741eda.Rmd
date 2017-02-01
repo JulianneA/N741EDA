@@ -1,11 +1,12 @@
 ---
 title: 'N741: Exploratory Data Analysis'
-author: "Melinda K. Higgins, PhD."
-date: "January 30, 2017"
+author: "Julianne Ammirati, Editing Code by Dr. Melinda Higgins"
+date: '`r format(Sys.Date(), "%B %d, %Y")`'
 output:
   word_document: default
   pdf_document: default
   html_document: default
+  github_document: default
 ---
 
 ## Initial R Chunk - document and environment setup
@@ -40,7 +41,7 @@ library(tidyverse)
 Here are some helpful links for doing EDA in R and Associated Graphics:
 
 * [http://www.cookbook-r.com/Graphs/](http://www.cookbook-r.com/Graphs/)
-* [Quick-R Website](http://www.statmethods.net/)
+* [Quick-R Website](http://www.statmethods.net/)  
 * [EDA Chapter in "R for Data Science"](http://r4ds.had.co.nz/exploratory-data-analysis.html)
 * [Code Examples from Practical Data Science with R - see Chapter 3](https://github.com/WinVector/zmPDSwR/tree/master/CodeExamples)
 
@@ -135,13 +136,13 @@ save(cmc, file="cmc.RData")
 ### Look at a subset of the data
 
 ```{r}
-head(cmc)
+head(cmc) #Head means start at the top of the dataset, tail would be to start at bottom
 ```
 
 ### Print this subset using `knitr::kable()`
 
 ```{r}
-knitr::kable(head(cmc))
+knitr::kable(head(cmc)) #KABLE will generate a table
 ```
 
 ## Summarise Dataset - Descriptive Stats
@@ -157,6 +158,7 @@ summary(cmc)
 Suppose you wanted to know the mean education level of the Huband's in this dataset. We can use the `as.numeric()` function to convert the variable and then run a `mean()` on it. We'll do more on facotrs later this semester.
 
 ```{r}
+mean(cmc$HusbEd) #this won't work because husband's ed has to be recoded as numeric
 mean(as.numeric(cmc$HusbEd))
 ```
 
@@ -176,7 +178,8 @@ The following code shows:
 # sample size and sample mean.
 
 # initial steps
-cmc %>%
+sum1 <-cmc %>% #this will write the ouput to new object
+#cmc %>% #take the dataset CMC and then summarize the following:
     summarise(nChild = length(NumChild),
               meanChild = mean(NumChild))
 
@@ -206,12 +209,14 @@ cmc %>%
 # each continent THEN summarise each continent's mean and sd."
 # I THEN sent the output to the kable function to output
 # there is one more column now for Wife's Religion.
+
 cmc %>%
     group_by(WifeRel) %>%
     summarise(nChild = length(NumChild),
               minChild = min(NumChild),
               meanChild = mean(NumChild),
               sdChild = sd(NumChild),
+              pct75 = quantile(NumChild, 0.75), #will give you 75% percentile
               medianChild = median(NumChild),
               maxChild = max(NumChild)) %>%
     knitr::kable(col.names=c("Wife Religion","N","min",
@@ -334,7 +339,7 @@ cmc %>%
     geom_histogram(aes(y=..density..),
                    colour="black",fill="white",
                    binwidth=5) +
-    geom_density()
+    geom_density() #nonparametric density approach
 ```
 
 Here is a slight tweak with the histogram bars in one color and the density curve overlaid using a different color with a transparency setting `alpha=.2` showing the utility of `ggplot2` and building visually appealing layers for detailed data visualizations.
